@@ -10,6 +10,7 @@ import { Toolbar } from '@/components/Toolbar'
 import { ResumeEditor } from '@/components/Editor'
 import { ResumePreview } from '@/components/Preview'
 import { UpdateDialog } from '@/components/Update'
+import { Toast } from '@/components/Shared'
 import { useElectron } from '@/hooks/useElectron'
 
 // 最小和最大宽度
@@ -93,6 +94,7 @@ export const App: React.FC = () => {
         </div>
       </div>
       <UpdateDialog />
+      <Toast />
     </DnDProvider>
   )
 }

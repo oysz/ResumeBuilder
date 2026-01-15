@@ -19,6 +19,10 @@ declare global {
       downloadUpdate: () => void
       installUpdate: () => void
       onUpdateStatus: (callback: (data: UpdateStatusData) => void) => () => void
+
+      // 分享相关 API
+      copyImageToClipboard: (imageBuffer: ArrayBuffer) => Promise<boolean>
+      openExternal: (url: string) => Promise<boolean>
     }
   }
 }

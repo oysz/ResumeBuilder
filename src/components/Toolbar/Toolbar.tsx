@@ -8,6 +8,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { resumeDataAtom, resetResumeAtom, addVersionAtom } from '@/store/atoms'
 import { ExportService } from '@/services'
 import { autoSaveService } from '@/services/autoSave.service'
+import { ShareButton } from '@/components/Shared'
 
 export const Toolbar: React.FC = () => {
   const resumeData = useAtomValue(resumeDataAtom)
@@ -156,6 +157,7 @@ export const Toolbar: React.FC = () => {
         >
           导出图片
         </button>
+        <ShareButton />
         <button
           type="button"
           onClick={handleExportPDF}

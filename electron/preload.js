@@ -3,7 +3,9 @@
  * 在渲染进程中安全地暴露 Node.js 和 Electron API
  */
 
-const { contextBridge, ipcRenderer } = require('electron')
+const electron = require('electron')
+const contextBridge = electron.contextBridge
+const ipcRenderer = electron.ipcRenderer
 
 // 暴露安全的 API 给渲染进程
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -61,5 +63,37 @@ contextBridge.exposeInMainWorld('electronAPI', {
     const handler = (event, data) => callback(data)
     ipcRenderer.on('update-status', handler)
     return () => ipcRenderer.removeListener('update-status', handler)
+  },
+
+  // ============ 分享相关 ============
+
+  /**
+   * 复制图片到剪贴板
+   * @param {ArrayBuffer} imageBuffer - 图片数据的 ArrayBuffer
+   * @returns {Promise<boolean>} 是否成功
+   */
+  copyImageToClipboard: async (imageBuffer) => {
+    try {
+      const result = await ipcRenderer.invoke('copy-image-to-clipboard', imageBuffer)
+      return result.success
+    } catch (error) {
+      console.error('复制到剪贴板失败:', error)
+      return false
+    }
+  },
+
+  /**
+   * 打开外部链接或应用
+   * @param {string} url - URL 或 URL scheme
+   * @returns {Promise<boolean>} 是否成功
+   */
+  openExternal: async (url) => {
+    try {
+      const result = await ipcRenderer.invoke('open-external', url)
+      return result.success
+    } catch (error) {
+      console.error('打开外部应用失败:', error)
+      return false
+    }
   },
 })

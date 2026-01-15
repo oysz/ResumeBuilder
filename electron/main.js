@@ -3,7 +3,7 @@
  * 负责创建和管理应用窗口
  */
 
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron')
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, clipboard, nativeImage } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const log = require('electron-log')
 const path = require('path')
@@ -291,6 +291,32 @@ ipcMain.on('download-update', () => {
 
 ipcMain.on('install-update', () => {
   autoUpdater.quitAndInstall()
+})
+
+// ============ 分享相关 IPC 通信 ============
+
+// 复制图片到剪贴板
+ipcMain.handle('copy-image-to-clipboard', async (event, imageBuffer) => {
+  try {
+    const buffer = Buffer.from(imageBuffer)
+    const image = nativeImage.createFromBuffer(buffer)
+    clipboard.writeImage(image)
+    return { success: true }
+  } catch (error) {
+    console.error('复制到剪贴板失败:', error)
+    return { success: false, error: error.message }
+  }
+})
+
+// 打开外部链接或应用
+ipcMain.handle('open-external', async (event, url) => {
+  try {
+    await shell.openExternal(url)
+    return { success: true }
+  } catch (error) {
+    console.error('打开外部应用失败:', error)
+    return { success: false, error: error.message }
+  }
 })
 
 // 当所有窗口关闭时退出应用（macOS 除外）

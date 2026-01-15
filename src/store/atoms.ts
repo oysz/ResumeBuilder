@@ -13,6 +13,7 @@ import type {
   VersionSnapshot,
 } from '@/types'
 import type { UpdateState } from '@/types/update.types'
+import type { ToastState } from '@/types/share.types'
 
 // ============ 默认数据 ============
 
@@ -328,4 +329,29 @@ export const setUpdateStatusAtom = atom(
 
 export const resetUpdateStateAtom = atom(null, (_get, set) => {
   set(updateStateAtom, defaultUpdateState)
+})
+
+// ============ Toast 通知状态 ============
+
+const defaultToastState: ToastState = {
+  visible: false,
+  message: '',
+  type: 'info',
+}
+
+export const toastStateAtom = atomWithStorage<ToastState>(
+  'toast-state',
+  defaultToastState,
+  createJSONStorage(() => sessionStorage)
+)
+
+export const showToastAtom = atom(
+  null,
+  (_get, set, data: Omit<ToastState, 'visible'>) => {
+    set(toastStateAtom, { visible: true, ...data })
+  }
+)
+
+export const hideToastAtom = atom(null, (_get, set) => {
+  set(toastStateAtom, defaultToastState)
 })

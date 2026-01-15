@@ -12,7 +12,9 @@
       "Bash(taskkill:*)",
       "Bash(if [ -f \"nul\" ])",
       "Bash(then rm -f \"nul\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)"
     ]
   }
 }
