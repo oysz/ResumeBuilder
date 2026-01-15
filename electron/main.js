@@ -4,6 +4,8 @@
  */
 
 const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron')
+const { autoUpdater } = require('electron-updater')
+const log = require('electron-log')
 const path = require('path')
 const fs = require('fs')
 
@@ -51,6 +53,91 @@ function createWindow() {
 
   // 创建应用菜单
   createMenu()
+
+  // 初始化自动更新（仅生产环境）
+  if (!isDev) {
+    configureAutoUpdater()
+  }
+}
+
+// ============ 自动更新配置 ============
+
+// 配置自动更新
+function configureAutoUpdater() {
+  autoUpdater.logger = log
+  autoUpdater.logger.transports.file.level = 'info'
+
+  autoUpdater.on('checking-for-update', () => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'checking',
+      message: '正在检查更新...',
+    })
+  })
+
+  autoUpdater.on('update-available', (info) => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'update-available',
+      message: '发现新版本',
+      info: {
+        version: info.version,
+        releaseDate: info.releaseDate,
+        releaseNotes: info.releaseNotes,
+      },
+    })
+  })
+
+  autoUpdater.on('update-not-available', (info) => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'update-not-available',
+      message: '当前已是最新版本',
+      currentVersion: info.version,
+    })
+  })
+
+  autoUpdater.on('download-progress', (progress) => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'downloading',
+      message: '正在下载更新...',
+      progress: {
+        percent: Math.floor(progress.percent),
+        transferred: Math.floor(progress.transferred / 1024 / 1024),
+        total: Math.floor(progress.total / 1024 / 1024),
+      },
+    })
+  })
+
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'update-downloaded',
+      message: '更新下载完成，即将重启应用',
+      info: {
+        version: info.version,
+        releaseDate: info.releaseDate,
+        releaseNotes: info.releaseNotes,
+      },
+    })
+  })
+
+  autoUpdater.on('error', (error) => {
+    mainWindow?.webContents.send('update-status', {
+      status: 'error',
+      message: '更新失败',
+      error: error.message,
+    })
+  })
+}
+
+// 检查更新
+async function checkForUpdates() {
+  try {
+    await autoUpdater.checkForUpdates()
+  } catch (error) {
+    mainWindow?.webContents.send('update-status', {
+      status: 'error',
+      message: '检查更新失败',
+      error: error.message,
+    })
+  }
 }
 
 // 创建应用菜单
@@ -133,13 +220,20 @@ function createMenu() {
       label: '帮助',
       submenu: [
         {
+          label: '检查更新',
+          click: () => {
+            checkForUpdates()
+          },
+        },
+        { type: 'separator' },
+        {
           label: '关于',
           click: () => {
             dialog.showMessageBox(mainWindow, {
               type: 'info',
               title: '关于简历生成器',
               message: '简历生成器',
-              detail: '一款简洁好用的简历制作工具\n支持导出 PDF、图片等多种格式',
+              detail: `版本: ${app.getVersion()}\n一款简洁好用的简历制作工具\n支持导出 PDF、图片等多种格式`,
             })
           },
         },
@@ -186,6 +280,19 @@ ipcMain.on('save-resume-data', async (event, data) => {
   }
 })
 
+// 更新相关 IPC 通信
+ipcMain.on('check-for-updates', () => {
+  checkForUpdates()
+})
+
+ipcMain.on('download-update', () => {
+  autoUpdater.downloadUpdate()
+})
+
+ipcMain.on('install-update', () => {
+  autoUpdater.quitAndInstall()
+})
+
 // 当所有窗口关闭时退出应用（macOS 除外）
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -203,6 +310,13 @@ app.on('activate', () => {
 // 应用就绪后创建窗口
 app.on('ready', () => {
   createWindow()
+
+  // 启动时自动检查更新（仅生产环境，延迟3秒）
+  if (!isDev) {
+    setTimeout(() => {
+      checkForUpdates()
+    }, 3000)
+  }
 })
 
 // 处理任何未捕获的异常

@@ -12,6 +12,7 @@ import type {
   ResumeSettings,
   VersionSnapshot,
 } from '@/types'
+import type { UpdateState } from '@/types/update.types'
 
 // ============ 默认数据 ============
 
@@ -303,3 +304,28 @@ export const isPreviewModeAtom = atom(false)
 export const isEditorPanelOpenAtom = atom(true)
 export const activeSectionAtom = atom<string | null>(null)
 export const selectedItemIdAtom = atom<string | null>(null)
+
+// ============ 自动更新状态 ============
+
+const defaultUpdateState: UpdateState = {
+  visible: false,
+  status: 'checking',
+  message: '',
+}
+
+export const updateStateAtom = atomWithStorage<UpdateState>(
+  'update-state',
+  defaultUpdateState,
+  createJSONStorage(() => localStorage)
+)
+
+export const setUpdateStatusAtom = atom(
+  null,
+  (_get, set, data: Partial<UpdateState>) => {
+    set(updateStateAtom, (prev) => ({ ...prev, ...data }))
+  }
+)
+
+export const resetUpdateStateAtom = atom(null, (_get, set) => {
+  set(updateStateAtom, defaultUpdateState)
+})

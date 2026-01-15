@@ -7,7 +7,12 @@
       "Bash(npm run electron:build:win:*)",
       "Bash(dir:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Resume Builder with Electron support\n\n- React + TypeScript + Vite resume builder application\n- Drag-and-drop section ordering\n- Multiple resume templates \\(Modern, Classic, Minimal, Professional\\)\n- PDF and image export functionality\n- Local storage persistence with version history\n- Electron cross-platform desktop app support\n- Resizable editor panel with live preview\n- Style customization \\(fonts, colors, spacing\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(taskkill:*)",
+      "Bash(if [ -f \"nul\" ])",
+      "Bash(then rm -f \"nul\")",
+      "Bash(fi)"
     ]
   }
 }

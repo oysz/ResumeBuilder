@@ -38,4 +38,28 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('export-pdf', callback)
     return () => ipcRenderer.removeListener('export-pdf', callback)
   },
+
+  // ============ 自动更新相关 ============
+
+  // 检查更新
+  checkForUpdates: () => {
+    ipcRenderer.send('check-for-updates')
+  },
+
+  // 下载更新
+  downloadUpdate: () => {
+    ipcRenderer.send('download-update')
+  },
+
+  // 安装更新
+  installUpdate: () => {
+    ipcRenderer.send('install-update')
+  },
+
+  // 监听更新状态
+  onUpdateStatus: (callback) => {
+    const handler = (event, data) => callback(data)
+    ipcRenderer.on('update-status', handler)
+    return () => ipcRenderer.removeListener('update-status', handler)
+  },
 })

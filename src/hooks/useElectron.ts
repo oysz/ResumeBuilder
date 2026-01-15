@@ -6,6 +6,7 @@
 import { useEffect } from 'react'
 import { useAtomValue } from 'jotai'
 import { resumeDataAtom } from '@/store/atoms'
+import type { UpdateStatusData } from '@/types/update.types'
 
 // 类型声明在 src/types/electron.d.ts 中
 
@@ -63,8 +64,33 @@ export const useElectron = () => {
     return () => window.removeEventListener('electron-save-resume', handleSave)
   }, [])
 
+  // 监听更新状态
+  useEffect(() => {
+    if (!window.electronAPI?.onUpdateStatus) return
+
+    const cleanupUpdateStatus = window.electronAPI.onUpdateStatus((data: UpdateStatusData) => {
+      console.log('更新状态:', data)
+
+      // 触发自定义事件，让 UpdateDialog 组件监听
+      if (data.status === 'update-available') {
+        window.dispatchEvent(new CustomEvent('update-available', { detail: data }))
+      } else if (data.status === 'update-downloaded') {
+        window.dispatchEvent(new CustomEvent('update-downloaded', { detail: data }))
+      } else if (data.status === 'error') {
+        console.error('更新错误:', data.error)
+      }
+    })
+
+    return () => {
+      cleanupUpdateStatus?.()
+    }
+  }, [])
+
   return {
     isElectron: !!window.electronAPI,
     platform: window.electronAPI?.platform || null,
+    checkForUpdates: () => window.electronAPI?.checkForUpdates(),
+    downloadUpdate: () => window.electronAPI?.downloadUpdate(),
+    installUpdate: () => window.electronAPI?.installUpdate(),
   }
 }
