@@ -1,0 +1,169 @@
+/**
+ * 全局样式
+ */
+
+/* 字体导入 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* 打印样式 */
+@media print {
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 字体类 */
+.font-sans {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-opensans {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.font-lato {
+  font-family: 'Lato', sans-serif;
+}
+
+.font-serif {
+  font-family: 'Merriweather', serif;
+}
+
+/* 模板配色方案 */
+[data-color-scheme='modern'] {
+  --primary-color: #2563eb;
+  --text-color: #1f2937;
+  --border-color: #e5e7eb;
+  --bg-secondary: #f9fafb;
+}
+
+[data-color-scheme='classic'] {
+  --primary-color: #1f2937;
+  --text-color: #1f2937;
+  --border-color: #d1d5db;
+  --bg-secondary: #f3f4f6;
+}
+
+[data-color-scheme='minimal'] {
+  --primary-color: #71717a;
+  --text-color: #27272a;
+  --border-color: #e4e4e7;
+  --bg-secondary: #fafafa;
+}
+
+[data-color-scheme='professional'] {
+  --primary-color: #374151;
+  --text-color: #1f2937;
+  --border-color: #d1d5db;
+  --bg-secondary: #f3f4f6;
+}
+
+/* 模板间距设置 */
+[data-spacing='0'] {
+  --section-spacing: 0.5rem;
+  --item-spacing: 0.25rem;
+}
+
+[data-spacing='1'] {
+  --section-spacing: 1rem;
+  --item-spacing: 0.5rem;
+}
+
+[data-spacing='2'] {
+  --section-spacing: 1.5rem;
+  --item-spacing: 0.75rem;
+}
+
+[data-spacing='3'] {
+  --section-spacing: 2rem;
+  --item-spacing: 1rem;
+}
+
+/* 拖拽样式 */
+.dragging {
+  opacity: 0.5;
+}
+
+.drop-target {
+  outline: 2px dashed #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* 工具类 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aspect-a4 {
+  aspect-ratio: 210 / 297;
+}
