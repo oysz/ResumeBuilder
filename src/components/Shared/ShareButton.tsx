@@ -8,7 +8,7 @@ import { ShareService } from '@/services/share.service'
 import { useToast } from './Toast'
 
 export const ShareButton: React.FC = () => {
-  const { showSuccess, showError, showInfo } = useToast()
+  const { showSuccess, showError } = useToast()
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
