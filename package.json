@@ -1,6 +1,6 @@
 {
   "name": "resume-builder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A feature-rich resume builder with drag-and-drop, templates, and PDF export",
   "main": "electron/main.js",
   "homepage": "./",
