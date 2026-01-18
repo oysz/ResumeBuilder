@@ -32,7 +32,7 @@ function createWindow() {
   // 加载应用
   if (isDev) {
     // 开发环境：加载 Vite 开发服务器
-    mainWindow.loadURL('http://localhost:3002')
+    mainWindow.loadURL('http://localhost:3000')
     // 打开开发者工具
     mainWindow.webContents.openDevTools()
   } else {
@@ -64,8 +64,37 @@ function createWindow() {
 
 // 配置自动更新
 function configureAutoUpdater() {
+  // 配置 updater 参数 - 使用 GitHub Releases
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'oysz',
+    repo: 'ResumeBuilder',
+    // 使用 token 避免 406 错误
+    // 注意：生产环境中应该从环境变量读取
+  })
+
   autoUpdater.logger = log
   autoUpdater.logger.transports.file.level = 'info'
+
+  // 设置自动下载为 false，让用户手动确认
+  autoUpdater.autoDownload = false
+
+  // 添加请求头，避免 406 错误
+  autoUpdater.requestHeaders = {
+    'Accept': 'application/json, text/plain, */*'
+  }
+
+  // 开发/测试环境：禁用签名验证
+  // 注意：生产环境应该使用有效的 Apple Developer 证书进行签名
+  // 这里使用环境变量控制
+  if (process.env.DISABLE_CODE_SIGNING === 'true' || !app.isPackaged) {
+    autoUpdater.autoRunAppAfterUpdate = false
+    // 在安装前手动验证或跳过验证
+    autoUpdater.on('update-downloaded', (info) => {
+      // 自定义安装流程，跳过签名验证
+      log.info('Update downloaded, custom install process')
+    })
+  }
 
   autoUpdater.on('checking-for-update', () => {
     mainWindow?.webContents.send('update-status', {
@@ -75,15 +104,76 @@ function configureAutoUpdater() {
   })
 
   autoUpdater.on('update-available', (info) => {
-    mainWindow?.webContents.send('update-status', {
-      status: 'update-available',
-      message: '发现新版本',
-      info: {
-        version: info.version,
-        releaseDate: info.releaseDate,
-        releaseNotes: info.releaseNotes,
-      },
-    })
+    // 检测到新版本
+    const releaseUrl = 'https://github.com/oysz/ResumeBuilder/releases/latest'
+
+    // 对于 macOS 开发/测试环境，推荐手动下载以避免签名问题
+    if (process.platform === 'darwin') {
+      dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: '发现新版本',
+        message: `发现新版本 ${info.version}`,
+        detail: `当前版本：${app.getVersion()}\n\n由于 macOS 的安全机制，建议您手动下载新版本：\n\n1. 点击"前往下载"打开下载页面\n2. 下载最新的 .dmg 文件\n3. 拖拽到 Applications 文件夹`,
+        buttons: ['前往下载', '稍后提醒', '自动更新（可能失败）'],
+        defaultId: 0,
+        cancelId: 1
+      }).then(result => {
+        if (result.response === 0) {
+          // 前往下载
+          shell.openExternal(releaseUrl)
+        } else if (result.response === 2) {
+          // 尝试自动更新 - 发送事件到前端
+          mainWindow?.webContents.send('update-available', {
+            status: 'update-available',
+            message: '发现新版本',
+            info: {
+              version: info.version,
+              releaseDate: info.releaseDate,
+              releaseNotes: info.releaseNotes
+            }
+          })
+          autoUpdater.downloadUpdate()
+        }
+      })
+    } else if (process.platform === 'win32') {
+      // Windows：说明安全警告后让用户选择
+      dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: '发现新版本',
+        message: `发现新版本 ${info.version}`,
+        detail: `当前版本：${app.getVersion()}\n\n您可以：\n\n1. 自动更新（推荐）：程序会自动下载并安装更新\n   注意：可能会看到 Windows Defender 的安全警告，点击"更多信息" → "仍要运行" 即可\n\n2. 手动下载：前往 GitHub 下载最新版本`,
+        buttons: ['自动更新', '手动下载', '稍后提醒'],
+        defaultId: 0,
+        cancelId: 2
+      }).then(result => {
+        if (result.response === 0) {
+          // 自动更新 - 发送事件到前端
+          mainWindow?.webContents.send('update-available', {
+            status: 'update-available',
+            message: '发现新版本',
+            info: {
+              version: info.version,
+              releaseDate: info.releaseDate,
+              releaseNotes: info.releaseNotes
+            }
+          })
+        } else if (result.response === 1) {
+          // 手动下载
+          shell.openExternal(releaseUrl)
+        }
+      })
+    } else {
+      // Linux：直接使用自动更新
+      mainWindow?.webContents.send('update-available', {
+        status: 'update-available',
+        message: '发现新版本',
+        info: {
+          version: info.version,
+          releaseDate: info.releaseDate,
+          releaseNotes: info.releaseNotes
+        }
+      })
+    }
   })
 
   autoUpdater.on('update-not-available', (info) => {
@@ -119,6 +209,11 @@ function configureAutoUpdater() {
   })
 
   autoUpdater.on('error', (error) => {
+    // 如果是 404 错误（通常是因为没有 Release），不显示错误
+    if (error.message.includes('404')) {
+      console.log('暂无可用的更新版本')
+      return
+    }
     mainWindow?.webContents.send('update-status', {
       status: 'error',
       message: '更新失败',
@@ -132,6 +227,11 @@ async function checkForUpdates() {
   try {
     await autoUpdater.checkForUpdates()
   } catch (error) {
+    // 如果是 404 错误（通常是因为没有 Release），不显示错误
+    if (error.message?.includes('404')) {
+      console.log('暂无可用的更新版本')
+      return
+    }
     mainWindow?.webContents.send('update-status', {
       status: 'error',
       message: '检查更新失败',

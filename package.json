@@ -1,6 +1,6 @@
 {
   "name": "resume-builder",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A feature-rich resume builder with drag-and-drop, templates, and PDF export",
   "main": "electron/main.js",
   "homepage": "./",
@@ -9,11 +9,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on http://localhost:3002 && cross-env NODE_ENV=development electron .\"",
-    "electron:build": "npm run build && electron-builder",
-    "electron:build:win": "npm run build && electron-builder --win",
-    "electron:build:mac": "npm run build && electron-builder --mac",
-    "electron:build:linux": "npm run build && electron-builder --linux"
+    "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "electron:build": "npm run build && electron-builder --publish always",
+    "electron:build:win": "npm run build && electron-builder --win --publish always",
+    "electron:build:mac": "npm run build && electron-builder --mac --publish always",
+    "electron:build:linux": "npm run build && electron-builder --linux --publish always"
   },
   "keywords": [
     "resume",
@@ -22,7 +22,10 @@
     "react",
     "electron"
   ],
-  "author": "",
+  "author": {
+    "name": "oysz",
+    "email": "oysz@example.com"
+  },
   "license": "MIT",
   "dependencies": {
     "clsx": "^2.0.0",
@@ -66,7 +69,9 @@
     "publish": {
       "provider": "github",
       "owner": "oysz",
-      "repo": "ResumeBuilder"
+      "repo": "ResumeBuilder",
+      "releaseType": "release",
+      "vPrefixedTagName": true
     },
     "directories": {
       "output": "release",
@@ -102,7 +107,11 @@
         "zip"
       ],
       "icon": "build/icon.icns",
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "artifactName": "resume-builder-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "artifactName": "resume-builder-${version}.${ext}"
     },
     "linux": {
       "target": [

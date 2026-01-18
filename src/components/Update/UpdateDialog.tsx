@@ -14,35 +14,53 @@ export const UpdateDialog: React.FC = () => {
   const resetUpdateState = useSetAtom(resetUpdateStateAtom)
   const [localStatus, setLocalStatus] = useState<UpdateStatusData | null>(null)
 
-  // 监听更新事件
+  // 监听更新状态变化
   useEffect(() => {
-    const handleUpdateAvailable = (e: CustomEvent<UpdateStatusData>) => {
-      setLocalStatus(e.detail)
-      setUpdateStatus({
-        visible: true,
-        status: e.detail.status,
-        message: e.detail.message,
-        updateInfo: e.detail.info,
-      })
-    }
+    if (!window.electronAPI?.onUpdateStatus) return
 
-    const handleUpdateDownloaded = (e: CustomEvent<UpdateStatusData>) => {
-      setLocalStatus(e.detail)
-      setUpdateStatus({
-        visible: true,
-        status: e.detail.status,
-        message: e.detail.message,
-        updateInfo: e.detail.info,
-      })
-    }
+    const cleanup = window.electronAPI.onUpdateStatus((data: UpdateStatusData) => {
+      setLocalStatus(data)
 
-    window.addEventListener('update-available', handleUpdateAvailable as EventListener)
-    window.addEventListener('update-downloaded', handleUpdateDownloaded as EventListener)
+      // 根据状态更新 UI
+      if (data.status === 'update-available') {
+        setUpdateStatus({
+          visible: true,
+          status: data.status,
+          message: data.message,
+          updateInfo: data.info,
+        })
+      } else if (data.status === 'update-not-available') {
+        setUpdateStatus({
+          visible: true,
+          status: data.status,
+          message: data.message,
+          currentVersion: data.currentVersion,
+        })
+      } else if (data.status === 'downloading') {
+        setUpdateStatus({
+          visible: true,
+          status: data.status,
+          message: data.message,
+          downloadProgress: data.progress,
+        })
+      } else if (data.status === 'update-downloaded') {
+        setUpdateStatus({
+          visible: true,
+          status: data.status,
+          message: data.message,
+          updateInfo: data.info,
+        })
+      } else if (data.status === 'error') {
+        setUpdateStatus({
+          visible: true,
+          status: data.status,
+          message: data.message,
+          error: data.error,
+        })
+      }
+    })
 
-    return () => {
-      window.removeEventListener('update-available', handleUpdateAvailable as EventListener)
-      window.removeEventListener('update-downloaded', handleUpdateDownloaded as EventListener)
-    }
+    return cleanup
   }, [setUpdateStatus])
 
   const handleDownloadUpdate = () => {
