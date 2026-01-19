@@ -5,6 +5,9 @@
 /* 字体导入 */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&family=Lato:wght@300;400;700&family=Merriweather:wght@300;400;700&display=swap');
 
+/* 代码高亮样式 */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -167,3 +170,4 @@ body {
 .aspect-a4 {
   aspect-ratio: 210 / 297;
 }
+

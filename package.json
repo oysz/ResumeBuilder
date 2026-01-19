@@ -1,7 +1,7 @@
 {
   "name": "resume-builder",
-  "version": "1.0.4",
-  "description": "A feature-rich resume builder with drag-and-drop, templates, and PDF export",
+  "version": "1.1.0",
+  "description": "A feature-rich resume builder with AI assistant, drag-and-drop, templates, and PDF export",
   "main": "electron/main.js",
   "homepage": "./",
   "scripts": {
@@ -29,6 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "clsx": "^2.0.0",
+    "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
     "electron-log": "^5.4.3",
     "electron-updater": "^6.7.3",
@@ -39,10 +40,14 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
     "uuid": "^9.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@types/uuid": "^9.0.7",

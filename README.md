@@ -1,8 +1,15 @@
 # 简历生成器 (Resume Builder)
 
-一个功能丰富的简历生成器，支持拖拽编辑、多种模板和 PDF 导出。
+一个功能丰富的简历生成器，支持 AI 智能助手、拖拽编辑、多种模板和 PDF 导出。
 
 ## 功能特性
+
+### 🤖 AI 智能助手（v1.1.0 新增）
+- **实时对话**: 基于智谱 AI GLM-4 的智能助手，实时流式输出
+- **简历优化**: AI 帮助优化简历内容、润色描述、生成自我介绍
+- **Markdown 渲染**: 支持格式化文本和代码块高亮
+- **加密存储**: API Key 采用 AES 加密存储，安全可靠
+- **历史记录**: 对话历史自动保存到本地
 
 ### 核心功能
 - **可视化编辑器**: 直观的侧边栏编辑界面，支持实时预览
@@ -33,6 +40,8 @@
 - **导出**: jsPDF + html2canvas
 - **验证**: Zod
 - **样式**: Tailwind CSS
+- **AI 集成**: 智谱 AI GLM-4 API（流式 SSE）
+- **加密**: CryptoJS
 
 ## 安装和运行
 
@@ -61,20 +70,28 @@ npm run preview
 \`\`\`
 src/
 ├── components/          # 组件
+│   ├── AI/             # AI 助手组件（v1.1.0 新增）
+│   │   ├── AIAssistant.tsx
+│   │   ├── AIChat.tsx
+│   │   ├── AIMessage.tsx
+│   │   ├── APIKeyInput.tsx
+│   │   └── AIFloatingButton.tsx
 │   ├── DnD/            # 拖拽组件
 │   ├── Editor/         # 编辑器组件
 │   ├── Preview/        # 预览组件
 │   └── Toolbar/        # 工具栏组件
 ├── services/           # 服务
+│   ├── ai.service.ts   # AI API 服务（v1.1.0 新增）
 │   ├── autoSave.service.ts
 │   └── export.service.ts
 ├── store/              # 状态管理
-│   └── atoms.ts
+│   └── atoms.ts        # 包含 AI 相关状态
 ├── templates/          # 简历模板
 │   ├── templates/
 │   ├── TemplateLoader.tsx
 │   └── TemplateRenderer.tsx
 ├── types/              # 类型定义
+│   ├── ai.types.ts     # AI 类型定义（v1.1.0 新增）
 │   └── resume.types.ts
 ├── utils/              # 工具函数
 │   ├── date.ts
@@ -92,7 +109,11 @@ src/
 3. **调整区块顺序**: 拖拽区块调整显示顺序
 4. **选择模板**: 在"模板选择"标签页选择喜欢的模板
 5. **调整样式**: 在"样式设置"标签页调整字体、字号等
-6. **导出简历**: 点击工具栏的"导出 PDF"按钮
+6. **使用 AI 助手**:
+   - 点击右下角的 AI 按钮
+   - 在设置中配置智谱 AI API Key
+   - 在对话中让 AI 帮助优化简历内容
+7. **导出简历**: 点击工具栏的"导出 PDF"按钮
 
 ## 数据持久化
 

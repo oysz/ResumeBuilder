@@ -14,6 +14,7 @@ import type {
 } from '@/types'
 import type { UpdateState } from '@/types/update.types'
 import type { ToastState } from '@/types/share.types'
+import type { ChatMessage } from '@/types/ai.types'
 
 // ============ 默认数据 ============
 
@@ -355,3 +356,64 @@ export const showToastAtom = atom(
 export const hideToastAtom = atom(null, (_get, set) => {
   set(toastStateAtom, defaultToastState)
 })
+
+// ============ AI 助手状态 ============
+
+// AI 面板开关
+export const aiPanelOpenAtom = atom(false)
+
+// AI 聊天历史
+export const aiChatHistoryAtom = atomWithStorage<ChatMessage[]>(
+  'ai-chat-history',
+  [],
+  createJSONStorage(() => localStorage)
+)
+
+// AI 正在流式输出
+export const aiIsStreamingAtom = atom(false)
+
+// AI 当前输入
+export const aiInputAtom = atom('')
+
+// 添加 AI 消息
+export const addAIMessageAtom = atom(
+  null,
+  (_get, set, message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
+    const newMessage: ChatMessage = {
+      ...message,
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+    }
+    set(aiChatHistoryAtom, (prev) => [...prev, newMessage])
+  }
+)
+
+// 更新最后一条 AI 消息（用于流式输出）
+export const updateLastAIMessageAtom = atom(
+  null,
+  (_get, set, contentUpdater: string | ((prev: string) => string)) => {
+    set(aiChatHistoryAtom, (prev) => {
+      const updated = [...prev]
+      const lastMessage = updated[updated.length - 1]
+
+      if (lastMessage && lastMessage.role === 'assistant') {
+        const newContent =
+          typeof contentUpdater === 'function'
+            ? contentUpdater(lastMessage.content)
+            : contentUpdater
+        updated[updated.length - 1] = {
+          ...lastMessage,
+          content: newContent,
+        }
+      }
+
+      return updated
+    })
+  }
+)
+
+// 清空 AI 聊天历史
+export const clearAIChatHistoryAtom = atom(null, (_get, set) => {
+  set(aiChatHistoryAtom, [])
+})
+
