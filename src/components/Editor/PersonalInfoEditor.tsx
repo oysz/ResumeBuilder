@@ -5,6 +5,7 @@
 import React from 'react'
 import { useAtom } from 'jotai'
 import { personalInfoAtom } from '@/store/atoms'
+import { AIEnhancedTextarea } from '@/components/AI'
 import type { PersonalInfo, SocialLink } from '@/types'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -102,13 +103,13 @@ export const PersonalInfoEditor: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">个人简介</label>
-        <textarea
-          value={info.summary}
-          onChange={(e) => updateInfo('summary', e.target.value)}
+        <AIEnhancedTextarea
+          value={info.summary || ''}
+          onChange={(value) => updateInfo('summary', value)}
+          label="个人简介"
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="简要介绍自己..."
+          context="个人简介"
         />
       </div>
 

@@ -6,6 +6,7 @@
 import React, { useCallback } from 'react'
 import { useAtom } from 'jotai'
 import { sectionsAtom } from '@/store/atoms'
+import { AIEnhancedTextarea } from '@/components/AI'
 import clsx from 'clsx'
 import type { SectionType, ResumeSection } from '@/types'
 
@@ -319,13 +320,13 @@ export const EducationForm: React.FC<{
         </label>
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
-        <textarea
+        <AIEnhancedTextarea
           value={data.description || ''}
-          onChange={(e) => onChange('description', e.target.value)}
+          onChange={(value) => onChange('description', value)}
+          label="描述"
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="在校经历、荣誉等"
+          context="教育经历描述"
         />
       </div>
     </div>
@@ -400,27 +401,23 @@ export const ExperienceForm: React.FC<{
         </label>
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">工作描述 *</label>
-        <textarea
+        <AIEnhancedTextarea
           value={data.description || ''}
-          onChange={(e) => onChange('description', e.target.value)}
+          onChange={(value) => onChange('description', value)}
+          label="工作描述"
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="简要描述你的工作职责"
+          context="工作经历描述"
         />
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          工作成就 (每行一项)
-        </label>
-        <textarea
+        <AIEnhancedTextarea
           value={(data.achievements || []).join('\n')}
-          onChange={(e) =>
-            onChange('achievements', e.target.value.split('\n').filter((a) => a.trim()))
-          }
+          onChange={(value) => onChange('achievements', value.split('\n').filter((a) => a.trim()))}
+          label="工作成就 (每行一项)"
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="列出你的主要工作成就..."
+          context="工作成就"
         />
       </div>
     </div>
@@ -539,13 +536,13 @@ export const ProjectsForm: React.FC<{
         />
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">项目描述 *</label>
-        <textarea
+        <AIEnhancedTextarea
           value={data.description || ''}
-          onChange={(e) => onChange('description', e.target.value)}
+          onChange={(value) => onChange('description', value)}
+          label="项目描述"
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="简要描述项目的目标和功能"
+          context="项目描述"
         />
       </div>
       <div className="col-span-2">
@@ -561,15 +558,13 @@ export const ProjectsForm: React.FC<{
         />
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          项目成就 (每行一项)
-        </label>
-        <textarea
+        <AIEnhancedTextarea
           value={(data.achievements || []).join('\n')}
-          onChange={(e) => onChange('achievements', e.target.value.split('\n').filter(a => a.trim()))}
+          onChange={(value) => onChange('achievements', value.split('\n').filter((a) => a.trim()))}
+          label="项目成就 (每行一项)"
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="列出项目的主要成就..."
+          context="项目成就"
         />
       </div>
     </div>
@@ -632,13 +627,13 @@ export const CertificationsForm: React.FC<{
         />
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
-        <textarea
+        <AIEnhancedTextarea
           value={data.description || ''}
-          onChange={(e) => onChange('description', e.target.value)}
+          onChange={(value) => onChange('description', value)}
+          label="描述"
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="证书的相关信息或备注"
+          context="证书描述"
         />
       </div>
     </div>
@@ -686,13 +681,13 @@ export const LanguagesForm: React.FC<{
         />
       </div>
       <div className="col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">备注</label>
-        <textarea
+        <AIEnhancedTextarea
           value={data.notes || ''}
-          onChange={(e) => onChange('notes', e.target.value)}
+          onChange={(value) => onChange('notes', value)}
+          label="备注"
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="其他相关信息"
+          context="语言能力备注"
         />
       </div>
     </div>

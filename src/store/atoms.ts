@@ -417,3 +417,63 @@ export const clearAIChatHistoryAtom = atom(null, (_get, set) => {
   set(aiChatHistoryAtom, [])
 })
 
+// ============ AI 润色状态 ============
+
+import type { PolishMode, PolishState } from '@/types/ai.types'
+
+// 润色状态
+export const polishStateAtom = atom<PolishState>({
+  isPolishing: false,
+  currentMode: null,
+  originalContent: '',
+  polishedContent: '',
+  showCompare: false,
+})
+
+// 设置润色中
+export const setPolishingAtom = atom(null, (_get, set, isPolishing: boolean) => {
+  set(polishStateAtom, (prev) => ({ ...prev, isPolishing }))
+})
+
+// 开始润色
+export const startPolishAtom = atom(null, (_get, set, { mode, content }: { mode: PolishMode; content: string }) => {
+  set(polishStateAtom, {
+    isPolishing: true,
+    currentMode: mode,
+    originalContent: content,
+    polishedContent: '',
+    showCompare: true,
+  })
+})
+
+// 更新润色内容（流式）
+export const updatePolishedContentAtom = atom(
+  null,
+  (_get, set, contentUpdater: string | ((prev: string) => string)) => {
+    set(polishStateAtom, (prev) => ({
+      ...prev,
+      polishedContent:
+        typeof contentUpdater === 'function'
+          ? contentUpdater(prev.polishedContent || '')
+          : contentUpdater,
+    }))
+  }
+)
+
+// 完成润色
+export const finishPolishAtom = atom(null, (_get, set) => {
+  set(polishStateAtom, (prev) => ({ ...prev, isPolishing: false }))
+})
+
+// 关闭对比视图
+export const closePolishCompareAtom = atom(null, (_get, set) => {
+  set(polishStateAtom, {
+    isPolishing: false,
+    currentMode: null,
+    originalContent: '',
+    polishedContent: '',
+    showCompare: false,
+  })
+})
+
+

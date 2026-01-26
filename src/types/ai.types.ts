@@ -96,3 +96,45 @@ export interface AIPanelState {
   hasApiKey: boolean;
   isStreaming: boolean;
 }
+
+// ============ AI 润色功能 ============
+
+// 润色模式类型
+export type PolishMode =
+  | 'polish'        // 基础润色：改进语言表达
+  | 'expand'        // 内容扩展：增加更多细节
+  | 'simplify'      // 精简内容：提炼核心要点
+  | 'format';       // 格式优化：转换为简历要点格式
+
+// 润色模式配置
+export interface PolishModeConfig {
+  id: PolishMode;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+// 润色请求参数
+export interface PolishRequest {
+  mode: PolishMode;
+  content: string;
+  context?: string;  // 上下文信息（如字段类型）
+}
+
+// 润色结果
+export interface PolishResult {
+  original: string;
+  polished: string;
+  mode: PolishMode;
+  timestamp: number;
+}
+
+// 润色状态
+export interface PolishState {
+  isPolishing: boolean;
+  currentMode: PolishMode | null;
+  originalContent: string;
+  polishedContent: string;
+  showCompare: boolean;
+}
