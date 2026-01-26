@@ -300,7 +300,7 @@ export function polishExperience(experience: string): Promise<string> {
 /**
  * 快捷操作 - 匹配职位描述
  */
-export function matchJobDescription(resumeData: any, jd: string): Promise<string> {
+export function matchJobDescription(jd: string): Promise<string> {
   const messages: ChatMessage[] = [
     {
       id: '1',
@@ -321,7 +321,7 @@ export function matchJobDescription(resumeData: any, jd: string): Promise<string
 
 // ============ AI 润色功能 ============
 
-import type { PolishMode, PolishRequest } from '@/types/ai.types';
+import type { PolishMode } from '@/types/ai.types';
 
 /**
  * 构建润色提示词
