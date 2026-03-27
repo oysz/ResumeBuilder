@@ -7,6 +7,9 @@ on:
 
 jobs:
   desktop-build:
+    env:
+      NPM_CONFIG_WORKSPACES: 'false'
+
     strategy:
       fail-fast: false
       matrix:
