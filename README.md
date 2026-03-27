@@ -67,6 +67,22 @@ npm run mobile:release
 
 > 需要先配置 `apps/mobile/eas.json` 和仓库 secret `EXPO_TOKEN`，CI 才会在打 `v*` tag 时自动触发 Android / iOS 构建。
 
+### 发布新版本
+
+```bash
+# 1. 升级版本号
+# 2. 提交代码
+git add .
+git commit -m "chore: release v1.1.1"
+
+# 3. 打 tag 并推送
+git tag v1.1.1
+git push origin main
+git push origin v1.1.1
+```
+
+> tag 必须以 `v` 开头，GitHub Actions 会自动识别并触发发布。
+
 ### 共享层类型检查
 
 ```bash
