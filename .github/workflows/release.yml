@@ -42,14 +42,17 @@ jobs:
 
       - name: Build desktop package (macOS)
         if: matrix.os == 'macos-latest'
+        working-directory: apps/desktop
         run: npx electron-builder --mac --publish never
 
       - name: Build desktop package (Windows)
         if: matrix.os == 'windows-latest'
+        working-directory: apps/desktop
         run: npx electron-builder --win --publish never
 
       - name: Build desktop package (Linux)
         if: matrix.os == 'ubuntu-latest'
+        working-directory: apps/desktop
         run: npx electron-builder --linux --publish never
 
       - name: Upload desktop artifacts
