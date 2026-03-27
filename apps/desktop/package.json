@@ -72,6 +72,7 @@
   },
   "build": {
     "appId": "com.resumebuilder.app",
+    "beforeBuild": "electron-builder-before-build.js",
     "electronVersion": "28.0.0",
     "productName": "简历生成器",
     "publish": {
