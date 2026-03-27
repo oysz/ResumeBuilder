@@ -91,11 +91,27 @@ jobs:
       - name: Upload desktop release assets
         run: |
           tag_name="${GITHUB_REF_NAME}"
-          mapfile -t files < <(find release-assets -type f | sort)
+          mapfile -t files < <(
+            find release-assets -type f \
+              ! -path '*/linux-unpacked/*' \
+              ! -path '*/win-unpacked/*' \
+              ! -path '*/win-arm64-unpacked/*' \
+              ! -path '*/mac-arm64/*' \
+              \( \
+                -name '*.dmg' -o \
+                -name '*.zip' -o \
+                -name '*.exe' -o \
+                -name '*.AppImage' -o \
+                -name '*.blockmap' -o \
+                -name 'latest*.yml' \
+              \) | sort
+          )
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No release assets found"
             exit 1
           fi
+          printf 'Assets to upload:\n'
+          printf '%s\n' "${files[@]}"
           gh release upload "$tag_name" "${files[@]}" --clobber
 
   mobile-release:
