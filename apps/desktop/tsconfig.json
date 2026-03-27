@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@resume-builder/core": ["../../packages/core/src/index.ts"],
+      "@resume-builder/core/*": ["../../packages/core/src/*"]
+    }
+  },
+  "include": ["src"]
+}

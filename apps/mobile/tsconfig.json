@@ -1,0 +1,12 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@resume-builder/core": ["../../packages/core/src/index.ts"],
+      "@resume-builder/core/*": ["../../packages/core/src/*"]
+    }
+  },
+  "include": ["App.tsx", "src"]
+}

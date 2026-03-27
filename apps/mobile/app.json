@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Resume Builder Mobile",
+    "slug": "resume-builder-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.oysz.resumebuilder.mobile"
+    },
+    "ios": {
+      "bundleIdentifier": "com.oysz.resumebuilder.mobile"
+    }
+  }
+}

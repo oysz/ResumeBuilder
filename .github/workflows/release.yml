@@ -5,8 +5,11 @@ on:
     tags:
       - 'v*'
 
+env:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
 jobs:
-  release:
+  desktop-release:
     strategy:
       fail-fast: false
       matrix:
@@ -57,3 +60,26 @@ jobs:
         run: npm run electron:build:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  mobile-release:
+    if: ${{ env.EXPO_TOKEN != '' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build mobile apps with EAS
+        run: npm run release --workspace @resume-builder/mobile

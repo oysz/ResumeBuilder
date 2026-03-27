@@ -1,132 +1,114 @@
-# 简历生成器 (Resume Builder)
+# Resume Builder
 
-一个功能丰富的简历生成器，支持 AI 智能助手、拖拽编辑、多种模板和 PDF 导出。
+一个基于 `npm workspaces` 的多端简历项目：
 
-## 功能特性
+- `apps/desktop`: 现有 `React + Electron + Vite` 桌面端
+- `apps/mobile`: 新增 `Expo + React Native` 移动端 MVP
+- `packages/core`: 桌面端和移动端共享的数据模型、默认值、校验、序列化和纯逻辑
 
-### 🤖 AI 智能助手（v1.1.0 新增）
-- **实时对话**: 基于智谱 AI GLM-4 的智能助手，实时流式输出
-- **简历优化**: AI 帮助优化简历内容、润色描述、生成自我介绍
-- **Markdown 渲染**: 支持格式化文本和代码块高亮
-- **加密存储**: API Key 采用 AES 加密存储，安全可靠
-- **历史记录**: 对话历史自动保存到本地
+## 当前状态
 
-### 核心功能
-- **可视化编辑器**: 直观的侧边栏编辑界面，支持实时预览
-- **拖拽排序**: 使用 React DnD 实现区块和项目拖拽排序
-- **多种模板**: 内置 4 种专业简历模板（现代、经典、极简、专业）
-- **PDF 导出**: 支持导出为高质量 PDF 文件
-- **图片导出**: 支持导出为 PNG/JPG 图片
-- **自动保存**: 数据自动保存到本地存储
+### Desktop
+- 保留原有 AI、拖拽、模板、导出、Electron IPC 与自动更新能力
+- 已迁移到 `apps/desktop`
 
-### 数据管理
-- **状态管理**: 使用 Jotai 进行轻量级状态管理
-- **版本控制**: 支持保存和恢复历史版本
-- **数据导入导出**: 支持 JSON 格式的数据导入导出
-- **表单验证**: 使用 Zod 进行数据验证
+### Mobile MVP
+- 支持个人信息和各类 section 的基础编辑
+- 支持单模板预览
+- 支持 `AsyncStorage` 本地持久化
+- 支持 JSON 导入导出
+- section 排序采用“上移 / 下移”按钮
 
-### 样式定制
-- **多种字体**: 支持 Inter、Roboto、Open Sans、Lato、Merriweather
-- **字号调整**: 小、中、大三档字号
-- **配色方案**: 现代、经典、极简、专业四种配色
-- **间距控制**: 支持自定义内容间距
+### Shared Core
+- `ResumeData` / `ResumeSection` / `ResumeSettings`
+- Zod schema 与数据校验
+- 默认数据工厂
+- section 排序与更新逻辑
+- JSON 序列化 / 反序列化
+- 平台抽象接口：`StorageAdapter`、`FileAdapter`
 
-## 技术栈
+## 安装
 
-- **框架**: React 18 + TypeScript
-- **构建工具**: Vite
-- **状态管理**: Jotai
-- **拖拽**: React DnD
-- **导出**: jsPDF + html2canvas
-- **验证**: Zod
-- **样式**: Tailwind CSS
-- **AI 集成**: 智谱 AI GLM-4 API（流式 SSE）
-- **加密**: CryptoJS
-
-## 安装和运行
-
-### 安装依赖
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
-### 开发模式
-\`\`\`bash
-npm run dev
-\`\`\`
+## 常用命令
 
-### 构建生产版本
-\`\`\`bash
-npm run build
-\`\`\`
+### 桌面端开发
 
-### 预览生产版本
-\`\`\`bash
-npm run preview
-\`\`\`
+```bash
+npm run desktop:electron:dev
+```
 
-## 项目结构
+### 桌面端构建
 
-\`\`\`
-src/
-├── components/          # 组件
-│   ├── AI/             # AI 助手组件（v1.1.0 新增）
-│   │   ├── AIAssistant.tsx
-│   │   ├── AIChat.tsx
-│   │   ├── AIMessage.tsx
-│   │   ├── APIKeyInput.tsx
-│   │   └── AIFloatingButton.tsx
-│   ├── DnD/            # 拖拽组件
-│   ├── Editor/         # 编辑器组件
-│   ├── Preview/        # 预览组件
-│   └── Toolbar/        # 工具栏组件
-├── services/           # 服务
-│   ├── ai.service.ts   # AI API 服务（v1.1.0 新增）
-│   ├── autoSave.service.ts
-│   └── export.service.ts
-├── store/              # 状态管理
-│   └── atoms.ts        # 包含 AI 相关状态
-├── templates/          # 简历模板
-│   ├── templates/
-│   ├── TemplateLoader.tsx
-│   └── TemplateRenderer.tsx
-├── types/              # 类型定义
-│   ├── ai.types.ts     # AI 类型定义（v1.1.0 新增）
-│   └── resume.types.ts
-├── utils/              # 工具函数
-│   ├── date.ts
-│   ├── validation.ts
-│   └── index.ts
-├── App.tsx             # 主应用
-├── main.tsx            # 入口文件
-└── index.css           # 全局样式
-\`\`\`
+```bash
+npm run desktop:build
+```
 
-## 使用说明
+### 移动端启动
 
-1. **编辑个人信息**: 在"内容编辑"标签页填写基本信息
-2. **添加经历**: 点击"添加"按钮添加教育、工作经历等
-3. **调整区块顺序**: 拖拽区块调整显示顺序
-4. **选择模板**: 在"模板选择"标签页选择喜欢的模板
-5. **调整样式**: 在"样式设置"标签页调整字体、字号等
-6. **使用 AI 助手**:
-   - 点击右下角的 AI 按钮
-   - 在设置中配置智谱 AI API Key
-   - 在对话中让 AI 帮助优化简历内容
-7. **导出简历**: 点击工具栏的"导出 PDF"按钮
+```bash
+npm run mobile:start
+```
 
-## 数据持久化
+### 移动端类型检查
 
-- 数据自动保存到浏览器 localStorage
-- 支持 JSON 格式导入导出
-- 支持版本历史管理
+```bash
+npm run mobile:typecheck
+```
 
-## 浏览器兼容性
+### 移动端发布
 
-- Chrome/Edge (推荐)
-- Firefox
-- Safari
+```bash
+npm run mobile:release
+```
 
-## 许可证
+> 需要先配置 `apps/mobile/eas.json` 和仓库 secret `EXPO_TOKEN`，CI 才会在打 `v*` tag 时自动触发 Android / iOS 构建。
 
-MIT
+### 共享层类型检查
+
+```bash
+npm run core:typecheck
+```
+
+### 共享层测试
+
+```bash
+npm test
+```
+
+## 目录结构
+
+```text
+.
+├── apps
+│   ├── desktop
+│   │   ├── electron
+│   │   ├── src
+│   │   └── package.json
+│   └── mobile
+│       ├── src
+│       ├── App.tsx
+│       └── package.json
+├── packages
+│   └── core
+│       ├── src
+│       └── package.json
+├── package.json
+└── tsconfig.base.json
+```
+
+## 迁移原则
+
+- 不直接把桌面端 UI 改成 RN
+- 共享数据层与纯逻辑，分别重写桌面 / 移动端 UI
+- 先保证桌面端可继续发版，再逐步扩展移动端能力
+
+## 已验证
+
+- `npm test`
+- `npm run core:typecheck`
+- `npm run mobile:typecheck`
+- `npm run desktop:build`

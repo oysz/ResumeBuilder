@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@resume-builder/core': path.resolve(__dirname, '../../packages/core/src'),
     },
   },
   server: {
