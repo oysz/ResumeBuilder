@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Ensure 7zip binary for electron-builder
+        run: npm install --no-save 7zip-bin@5.2.0
+
       - name: Build frontend
         run: npm run desktop:build
 
